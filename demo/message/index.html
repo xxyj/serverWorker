@@ -1,0 +1,65 @@
+<html>
+
+<head>
+    <title>最简单的demo</title>
+</head>
+
+<body>
+    <div>
+        <input type='text' id='PMValue' />
+        <button id='PM'>postMessage通信</button>
+    </div>
+    <div>
+        <input type='text' id='BCValue' />
+        <button id='BC'>BroadcastChannel通信</button>
+    </div>
+    <div>
+        <input type='text' id='MCValue' />
+        <button id='MC'>messageChannel通信</button>
+    </div>
+    <script>
+        window.onload = function () {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('./sw.js').then(() => {
+                    console.log('注册成功');
+                }).catch(() => {
+                    console.log('注册失败');
+                });
+            }
+            const btn = document.querySelectorAll('button')
+            const bc = new BroadcastChannel('test');
+            const mc = new MessageChannel();
+            document.addEventListener('click', evt => {
+                if (evt.srcElement.type === 'submit') {
+                    const id = evt.srcElement.id
+                    const val = document.getElementById(`${id}Value`).value
+                    switch (id) {
+                        case 'PM':
+                            navigator.serviceWorker.controller && navigator.serviceWorker.controller.postMessage(
+                                val);
+                            break;
+                        case 'BC':
+                            bc.postMessage(val)
+                            break;
+                        case 'MC':
+                            mc.port1.postMessage(val)
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            })
+            navigator.serviceWorker.addEventListener('message', evt => {
+                document.getElementById(`PMValue`).value = evt.data
+            })
+            bc.onmessage = (evt) => {
+                document.getElementById(`BCValue`).value = evt.data
+            }
+            mc.port1.onmessage = (evt) => {
+                document.getElementById(`MCValue`).value = evt.data
+            }
+        }
+    </script>
+</body>
+
+</html>

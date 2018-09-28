@@ -1,0 +1,22 @@
+<html>
+
+<head>
+    <title>最简单的demo</title>
+</head>
+
+<body>
+    Hello, Service Worker!
+    <img src='https://farm2.staticflickr.com/1891/44718016261_7a3cb1fcde_c.jpg' />
+    <script src="./test.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./sw.js').then(() => {
+                console.log('注册成功');
+            }).catch(() => {
+                console.log('注册失败');
+            });
+        }
+    </script>
+</body>
+
+</html>
